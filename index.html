@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Trà Sữa - Tính Tiền</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'primary': '#f68e57',
+                        'dark-bg': '#1f2937',
+                        'dark-text': '#f3f4f6',
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            color: #1f2937;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-dark-bg text-gray-900 dark:text-dark-text">
+
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-primary dark:text-orange-400">Trà Sữa Của Bạn</h1>
+            <p class="text-xl mt-2 text-gray-600 dark:text-gray-400">Thực đơn đồ uống - Quét mã QR để xem</p>
+        </header>
+
+        <!-- Total Display Section -->
+        <div class="bg-primary text-white p-4 rounded-lg shadow-md mb-8 text-center flex justify-between items-center">
+            <div class="flex-1">
+                <p class="text-lg">Tổng cộng:</p>
+                <p id="total-price" class="text-3xl font-bold">0đ</p>
+            </div>
+            <button id="reset-button" class="bg-white text-primary font-bold py-2 px-4 rounded-full hover:bg-gray-200 transition-colors">
+                Làm lại
+            </button>
+        </div>
+
+        <!-- Menu Sections -->
+        <div id="menu-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Menu items will be injected here by JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        const menu = {
+            'Trà Sữa': [
+                { name: 'Trà Sữa Truyền Thống', price: 25000, img: 'https://kenny1804.github.io/menu-tra-sua/images/tra-sua-truyen-thong.jpg' },
+                { name: 'Trà Sữa Thái', price: 28000, img: 'https://placehold.co/150x150/fcd34d/ffffff?text=TS+Thái' },
+                { name: 'Trà Sữa Khoai Môn', price: 30000, img: 'https://placehold.co/150x150/a78bfa/ffffff?text=TS+Khoai+Môn' },
+                { name: 'Trà Sữa Caramel', price: 32000, img: 'https://placehold.co/150x150/fbbf24/ffffff?text=TS+Caramel' },
+            ],
+            'Trà Trái Cây': [
+                { name: 'Trà Đào Cam Sả', price: 35000, img: 'https://placehold.co/150x150/fdba74/ffffff?text=Trà+Đào' },
+                { name: 'Trà Vải', price: 30000, img: 'https://placehold.co/150x150/f87171/ffffff?text=Trà+Vải' },
+                { name: 'Trà Dâu', price: 32000, img: 'https://placehold.co/150x150/fca5a5/ffffff?text=Trà+Dâu' },
+                { name: 'Trà Xoài', price: 35000, img: 'https://placehold.co/150x150/fde68a/ffffff?text=Trà+Xoài' },
+            ],
+            'Toppings': [
+                { name: 'Trân Châu Đen', price: 5000, img: 'https://placehold.co/150x150/4b5563/ffffff?text=TCD' },
+                { name: 'Trân Châu Trắng', price: 6000, img: 'https://placehold.co/150x150/e5e7eb/1f2937?text=TCT' },
+                { name: 'Thạch Rau Câu', price: 5000, img: 'https://placehold.co/150x150/d1d5db/1f2937?text=Thạch' },
+                { name: 'Kem Phô Mai', price: 10000, img: 'https://placehold.co/150x150/fcd34d/1f2937?text=Kem+Phô+Mai' },
+            ]
+        };
+
+        const menuContainer = document.getElementById('menu-container');
+        const totalPriceEl = document.getElementById('total-price');
+        const resetButton = document.getElementById('reset-button');
+        let totalAmount = 0;
+
+        // Function to render the menu
+        function renderMenu() {
+            menuContainer.innerHTML = ''; // Clear existing menu
+            for (const category in menu) {
+                // Create category title
+                const categorySection = document.createElement('div');
+                categorySection.className = 'col-span-1 md:col-span-2 lg:col-span-3 mb-4';
+                categorySection.innerHTML = `<h2 class="text-3xl font-bold border-b-2 border-primary pb-2 text-gray-800 dark:text-gray-300">${category}</h2>`;
+                menuContainer.appendChild(categorySection);
+
+                // Create items for the category
+                menu[category].forEach(item => {
+                    const itemCard = document.createElement('div');
+                    itemCard.className = 'bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 flex items-center space-x-4 transition-transform transform hover:scale-105 hover:shadow-xl';
+                    itemCard.innerHTML = `
+                        <img src="${item.img}" alt="${item.name}" class="w-16 h-16 rounded-full object-cover">
+                        <div class="flex-grow">
+                            <h3 class="text-lg font-semibold">${item.name}</h3>
+                            <p class="text-primary font-bold mt-1">${item.price.toLocaleString('vi-VN')}đ</p>
+                        </div>
+                        <button class="add-button bg-primary text-white p-2 rounded-full hover:bg-orange-600 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    `;
+                    itemCard.querySelector('.add-button').addEventListener('click', () => {
+                        totalAmount += item.price;
+                        updateTotalDisplay();
+                    });
+                    menuContainer.appendChild(itemCard);
+                });
+            }
+        }
+
+        // Function to update the total price display
+        function updateTotalDisplay() {
+            totalPriceEl.textContent = `${totalAmount.toLocaleString('vi-VN')}đ`;
+        }
+        
+        // Reset button listener
+        resetButton.addEventListener('click', () => {
+            totalAmount = 0;
+            updateTotalDisplay();
+        });
+
+        // Initial render
+        renderMenu();
+    </script>
+</body>
+</html>
